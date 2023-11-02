@@ -1,0 +1,46 @@
+{
+
+;; layers are basically "hyper" keys
+;; press this in combination with something else and depending on your rule, make things happen
+:layers {
+    ;; :tab-mode   {:key :tab}
+    :caps-mode {:key :caps_lock :alone {:key :escape}}
+} ;; layers
+
+
+;; main contains multiple manipulators
+:main [
+       {:des "caps lock mode: quick reach for cursor etc."
+        :rules [:caps-mode
+          ;; caps lock : arrow mode
+          [:##h :##left_arrow ]
+          [:##j :##down_arrow  ]
+          [:##k :##up_arrow  ]
+          [:##l :##right_arrow    ]
+
+          ;; switch tabs in most apps
+          ;; Cmd Shift [
+          [:##comma :!CSopen_bracket]
+          ;; Cmd Shift ]
+          [:##period :!CSclose_bracket]
+
+          ;; VSCode ctrl cmd →
+          ;; [:!Cleft_arrow :!CTleft_arrow]
+          ;; [:!Cright_arrow :!CTright_arrow]
+
+          ;; Quick Mouse handles
+          [:down_arrow {:mkey {:y 1536}}]
+          [:up_arrow {:mkey {:y -1536}}]
+          [:left_arrow {:mkey {:x -1536}}]
+          [:right_arrow {:mkey {:x 1536}}]
+          [:return_or_enter {:pkey :button1}]
+          [:!Creturn_or_enter {:pkey :button2}]
+
+          ;; Quick navigation
+          [:d :!Oright_arrow  ]
+          [:w :!Oleft_arrow  ]
+        ]}
+
+] ;; main list
+
+}

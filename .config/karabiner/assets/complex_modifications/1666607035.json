@@ -1,0 +1,25 @@
+{
+    "title": "Microphone Mute via Mutify",
+    "rules": [
+        {
+            "description": "Microphone Mute via Mutify",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "f5"
+                    },
+                    "to": [
+                        {
+                            "key_code": "0",
+                            "modifiers": [
+                                "left_command",
+                                "left_shift"
+                            ]
+                        }
+                    ],
+                    "type": "basic"
+                }
+            ]
+        }
+    ]
+}

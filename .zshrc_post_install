@@ -1,0 +1,34 @@
+plug "zap-zsh/exa"
+plug "chrishrb/zsh-kubectl"
+plug "wintermi/zsh-brew"
+plug "wintermi/zsh-gcloud"
+plug "wintermi/zsh-rust"
+plug "zap-zsh/fzf"
+
+plug "$HOME/.config/zsh/zsh-aliases"
+
+# Load and initialise completion system
+autoload -Uz compinit
+compinit
+
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+eval "$(direnv hook zsh)"
+
+export GPG_TTY=$(tty)
+export NNN_TMPFILE="$HOME/.config/nnn/.lastd"
+export EDITOR="$(which nvim)"
+export VISUAL="$(which nvim)"
+export XDG_CONFIG_HOME="$HOME/.config"
+
+function _tmux_completions() {
+  local -a sessions
+  sessions=($(tmux-ls))
+  compadd -a sessions
+}
+compdef _tmux_completions tmux-open
+
+source <(pkgx --shellcode)  #docs.pkgx.sh/shellcode

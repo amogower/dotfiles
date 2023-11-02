@@ -1,0 +1,29 @@
+# system bin
+export PATH="/usr/bin:/usr/local/bin:$PATH"
+
+# homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+
+# nodejs
+export PATH="node_modules/.bin:$PATH"
+
+# Deno
+export PATH="~/.deno/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/Andrew.Gower/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+
+# ruby
+if [ -d "/opt/homebrew/opt/ruby/bin" ] 
+then
+  export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+  export PATH="$(gem environment gemdir)/bin:$PATH"
+fi
+
+# fly
+export FLYCTL_INSTALL="/Users/Andrew.Gower/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+# postgresq# postgresq# postgresql
+export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"

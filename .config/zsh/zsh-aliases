@@ -1,0 +1,82 @@
+alias reload="source ~/.zshrc"
+alias addalias="vim ~/.config/zsh/zsh-aliases"
+alias addenv="vim ~/.config/zsh/zsh-env"
+alias addpath="vim ~/.config/zsh/zsh-path"
+alias vim="nvim"
+alias tmux="direnv exec / tmux"
+alias t="tmux"
+alias ta="t a -t"
+alias tls="t ls"
+alias tn="t new -t"
+alias ls="eza"
+alias code="code-insiders"
+alias gpf="gp --force-with-lease"
+alias gpo="gp origin"
+alias gpom="gpo master"
+alias glo="gl origin"
+alias glom="glo master"
+alias glomr="gl --rebase origin master"
+alias kctx="kubectx"
+alias kns="kubens"
+alias k="kubectl"
+alias kg="kubectl get"
+alias kpf="kubectl port-forward"
+alias update-nvim-stable="asdf uninstall neovim stable && asdf install neovim stable"
+alias update-nvim-nightly="asdf uninstall neovim nightly && asdf install neovim nightly"
+alias pinentry="pinentry-mac"
+alias json="jq -R 'fromjson?'"
+alias cfg="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
+alias n="nnn"
+
+function gar_auth() {
+  npm_config_registry=https://registry.npmjs.org npx google-artifactregistry-auth
+  unset npm_config_registry
+}
+
+function get_app_bundle_ids() {
+  lsappinfo list | rg --multiline '("[^"]*?") ASN:.*\n.*bundleID=("[^"]*?")' --replace '$1 $2' --only-matching
+}
+
+function gpot() {
+  branch_name=$(git rev-parse --abbrev-ref HEAD)
+  gpo $(echo $branch_name) -o ci.variable="CI_DRY_RUN=true" -o ci.variable="CI_TEST_BRANCH_NAME=${branch_name}"
+}
+
+function kl() {
+  command stern service/"$@"
+}
+
+function kls() {
+  command stern --container oc-backend-svc service/"$@"
+}
+
+function nnn() {
+  command nnn "$@"
+
+  if [ -f "$NNN_TMPFILE" ]; then
+    . "$NNN_TMPFILE"
+  fi
+}
+
+# Sketchybar interactivity overloads
+function brew() {
+  command brew "$@" 
+
+  if [[ $* =~ "upgrade" ]] || [[ $* =~ "update" ]] || [[ $* =~ "outdated" ]]; then
+    sketchybar --trigger brew_update
+  fi
+}
+
+function zen() {
+  ~/.config/sketchybar/plugins/zen.sh $1
+}
+
+function suyabai() {
+  SHA256=$(shasum -a 256 /opt/homebrew/bin/yabai | awk "{print \$1;}")
+  if [ -f "/private/etc/sudoers.d/yabai" ]; then
+    sudo sed -i '' -e 's/sha256:[[:alnum:]]*/sha256:'${SHA256}'/' /private/etc/sudoers.d/yabai
+  else
+    echo "sudoers file does not exist yet"
+  fi
+}
+

@@ -1,0 +1,8 @@
+data.location=~/.tasks
+news.version=2.6.0
+taskd.certificate=~/.config/taskwarrior/inthe.AM/private.certificate.pem
+taskd.key=~/.config/taskwarrior/inthe.AM/private.key.pem
+taskd.ca=~/.config/taskwarrior/inthe.AM/ca.certificate.pem
+taskd.server=inthe.am:53589
+taskd.credentials=inthe_am/amogower/ae6b20f5-59fd-43ab-ac4e-ded97f173f1e
+taskd.trust=strict
