@@ -1,134 +1,130 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
-# Install xCode cli tools
-echo "Installing commandline tools..."
-xcode-select --install
+asdf_runtimes=false
+brew=false
+duti_settings=false
+fonts=false
+mas=false
+system_settings=false
+verbose_mode=false
 
-# Install zap-zsh
-zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+usage() {
+  echo "Usage: $0 [OPTIONS]"
+  echo "Options:"
+  echo " -h, --help        Display this help message"
+  echo " -v, --verbose     Enable verbose mode"
+  echo " -a, --all         Install everything"
+  echo " -b, --brew        Install Brewfile"
+  echo " -c, --casks       Install brew casks"
+  echo " -d, --duti        Set default applications for file types with duti"
+  echo " -f, --fonts       Install fonts"
+  echo " -m, --mas         Install Apple App Store apps with mas"
+  echo " -r, --runtimes    Install asdf to manage runtimes"
+  echo " -s, --system      Customise system settings"
+}
 
-# Copying and checking out configuration files
-echo "Checking out configuration files to ${HOME}"
+has_argument() {
+  [[ ("$1" == *=* && -n ${1#*=}) || ( ! -z "$2" && "$2" != -*)  ]];
+}
+
+extract_argument() {
+  echo "${2:-${1#*=}}"
+}
+
+# Function to handle options and arguments
+handle_options() {
+  while [ $# -gt 0 ]; do
+    case $1 in
+      -h | --help)
+        usage
+        exit 0
+        ;;
+      -v | --verbose)
+        verbose_mode=true
+        ;;
+      -a | --all)
+        asdf_runtimes=true
+        backround_services=true
+        brew_casks=true
+        brew_packages=true
+        duti_settings=true
+        fonts=true
+        mas=true
+        system_settings=true
+        ;;
+      -b | --background)
+        backround_services=true
+        ;;
+      -c | --casks)
+        brew_casks=true
+        ;;
+      -d | --duti)
+        duti_settings=true
+        ;;
+      -f | --fonts)
+        fonts=true
+        ;;
+      -m | --mas)
+        mas=true
+        ;;
+      -p | --packages)
+      brew_packages=true
+      ;;
+    -r | --runtimes)
+      asdf_runtimes=true
+      ;;
+    -s | --system)
+      system_settings=true
+      ;;
+    *)
+      echo "Invalid option: $1" >&2
+      usage
+      exit 1
+      ;;
+  esac
+  shift
+done
+}
+
+# Perform the desired actions based on the provided flags and arguments
+if [ "$verbose_mode" = true ]; then
+  echo "Verbose mode enabled."
+fi
+
+# xcode commandline tools
+if ! xcode-select -p > /dev/null; then
+  if [ "$verbose_mode" = true ]; then
+    echo "Installing commandline tools..."
+  fi
+  xcode-select --install
+fi
+
+# zap-zsh
+if ! zap > /dev/null; then
+  zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+  rm .zshrc
+fi
+
+# dotfiles
+if [ "$verbose_mode" = true ]; then
+  echo "Checking out configuration files to ${HOME}"
+fi
 [ ! -d "$HOME/dotfiles" ] && git clone --bare https://github.com/amogower/dotfiles.git $HOME/dotfiles
-git --git-dir=$HOME/dotfiles/ --work-tree=$HOME checkout master
-
-# Reload zsh
+git --git-dir=$HOME/dotfiles/ --work-tree=$HOME checkout
 source $HOME/.zshrc
 
 # Homebrew
 ## Install
-echo "Installing brew..."
+if [ "$verbose_mode" = true ]; then
+  echo "Installing brew..."
+fi
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew analytics off
+brew bundle
 
-## Taps
-echo "Tapping brew..."
-brew tap homebrew/cask-fonts
-brew tap homebrew/cask-versions
-brew tap koekeishiya/formulae
-brew tap FelixKratz/formulae
-brew tap hashicorp/tap
-
-## Formulae
-echo "Installing brew formulae..."
-### Essentials
-brew install git
-brew install git-delta
-brew install llvm
-brew install wget
-brew install jq
-brew install ripgrep
-brew install mas
-brew install gh
-brew install ifstat
-brew install switchaudio-osx
-brew install tmux
-brew install fzf
-brew install asdf
-brew install bat
-brew install eza
-brew install tailspin
-brew install stern
-brew install duti
-brew install foreman
-brew install watch
-brew install watchman
-brew install trash
-brew install gpg2
-brew install gnupg
-brew install pinentry-mac
-brew install docker
-brew install kubectl
-brew install kubectx
-brew install hashicorp/tap/terraform
-brew install helm
-brew install flyctl
-brew install redis
-brew install task
-brew install timewarrior
-brew install dooit
-brew install skhd
-brew install sketchybar
-brew install borders
-brew install yabai
-brew install nnn
-brew install jesseduffield/lazygit/lazygit
-
-## Casks
-echo "Installing brew casks..."
-### Terminals & Browsers
-brew install --cask alacritty
-brew install --cask kitty
-brew install --cask arc
-
-### Utils
-brew install --cask 1password
-brew install --cask 1password-cli
-brew install --cask karabiner-elements
-brew install --cask alt-tab
-brew install --cask setapp
-brew install --cask appcleaner
-brew install --cask google-cloud-sdk
-
-### Dev
-brew install --cask colima
-brew install --cask visual-studio-code
-brew install --cask visual-studio-code-insiders
-brew install --cask jetbrains-toolbox
-brew install --cask postman
-brew install --cask herd
-brew install --cask tinkerwell
-brew install --cask helo
-brew install --cask dbngin
-
-### Work
-brew install --cask microsoft-teams
-brew instsal --cask microsoft-office
-brew install --cask microsoft-remote-desktop
-brew install --cask slack
-
-### Reversing
-brew install --cask machoview
-brew install --cask hex-fiend
-brew install --cask cutter
-brew install --cask sloth
-
-### Nice to have
-brew install --cask beeper
-brew install --cask raycast
-brew install --cask krisp
-brew install --cask whatsapp
-
-### Fonts
-brew install --cask sf-symbols
-brew install --cask font-hack-nerd-font
-brew install --cask font-jetbrains-mono-nerd-font
-brew install --cask font-fira-code-nerd-font
-
-# Mac App Store Apps
-echo "Installing App Store apps..."
-mas install 1451685025 # Wireguard
-mas install 497799835 # Xcode
+# Misc binaries
+echo "Installing other misc binaries..."
+curl -sSf https://sshx.io/get | sh
 
 # macOS Settings
 echo "Changing macOS defaults..."
@@ -226,9 +222,9 @@ asdf install pnpm latest
 asdf plugin add python
 asdf install python latest
 
-source $HOME/.zshrc
-
+# Add .zshrc items that require all of the above installed
 cat .zshrc_post_install >> $HOME/.zshrc
+source $HOME/.zshrc
 
 cfg config --local status.showUntrackedFiles no
 
